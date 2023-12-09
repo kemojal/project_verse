@@ -6,6 +6,7 @@ use serde_json::json;
 use sqlx::{PgPool, query_as};
 use crate::models::auth_models::{AuthUser, Claims, SignInData};
 
+
 pub async fn sign_in(Json(signin_data): Json<SignInData>, pool: Arc<PgPool>) -> impl IntoResponse {
     // Extract username and password from signin_data
     let user_email = signin_data.email;
@@ -18,7 +19,7 @@ pub async fn sign_in(Json(signin_data): Json<SignInData>, pool: Arc<PgPool>) -> 
     // "SELECT id, email, password, first_name, last_name FROM users WHERE email = $1"
     let user: Option<AuthUser> = query_as!(
         AuthUser,
-        "SELECT id, email, password, verified, created_at, updated_at FROM users WHERE email = $1",
+        "SELECT id, email, full_name, username, profile_picture, password, verified, created_at, updated_at FROM users WHERE email = $1",
         user_email
     )
         .fetch_optional(&*pool)
@@ -27,26 +28,42 @@ pub async fn sign_in(Json(signin_data): Json<SignInData>, pool: Arc<PgPool>) -> 
 
     // // Check if user exists and password is valid
     if let Some(user) = user {
+        print!("user {:?}", user);
 
         // if let (Some(id), Some(email), Some(hashed_password), Some(first_name), Some(last_name)) = (user.id, user.email, user.password, user.first_name, user.last_name) {
-        if let (Some(id), Some(email), Some(hashed_password), Some(verified), Some(created_at), Some(updated_at)) = (user.id, user.email, user.password, user.verified, user.created_at, user.updated_at) {
+        // if let (Some(id), Some(email), Some(hashed_password), Some(verified), Some(created_at), Some(updated_at), Some(full_name), Some(username), Some(profile_picture)) = (user.id, user.email, user.password, user.verified, user.created_at, user.updated_at, user.full_name, user.username, user.profile_picture ) {
+            if let (Some(id), Some(email), Some(hashed_password)) = (user.id, user.email, user.password ) {
             if bcrypt::verify(&user_password, &hashed_password).expect("Failed to verify password") {
 
                 let jwt_secret = "CfLTk9J0MA3jBF3/zuE4VUyN7djM2KMPy4otUpbkbE8=";
                 let expiration = Utc::now() + Duration::hours(1);
 
 
-
+                let full_name = user.full_name.unwrap_or_else(|| "Unknown".to_string());
+                let username = user.username.unwrap_or_else(|| "Unknown".to_string());
+                let profile_picture = user.profile_picture.unwrap_or_else(|| "Unknown".to_string());
+                let verified = Some(user.verified).is_some();
+                let created_at = if let Some(created_at) = user.created_at {
+                    created_at
+                } else {
+                    Utc::now().naive_utc() // Default value if user.created_at is None
+                };
+        
+                let updated_at = if let Some(updated_at) = user.updated_at {
+                    updated_at
+                } else {
+                    Utc::now().naive_utc() // Default value if user.updated_at is None
+                };
 
                 let my_claims = Claims {
                     email: email.to_owned(),
-                    verified: verified.to_owned(),
-                    // sub: first_name.to_owned(),
-                    // first_name: first_name.to_owned(),
-                    // last_name: last_name.to_owned(),
+                    verified,
+                    full_name,
+                    username,
+                    profile_picture,
                     user_id: id.to_owned(),
-                    created_at: created_at.to_owned(),
-                    updated_at: updated_at.to_owned(),
+                    created_at,
+                    updated_at,
                     exp: 10000000000,
                 };
 
@@ -71,6 +88,7 @@ pub async fn sign_in(Json(signin_data): Json<SignInData>, pool: Arc<PgPool>) -> 
 
 
         }else {
+            println!("Password not verified!");
             // Passwords do not match, return an error response
             return Json(json!({
                     "status": "error",

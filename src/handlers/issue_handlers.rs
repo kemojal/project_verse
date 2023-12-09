@@ -1,16 +1,18 @@
 use std::sync::Arc;
 use axum::extract::Path;
 use axum::response::{Json, IntoResponse, Response};
+use chrono::expect;
 use serde_json::json;
 use sqlx::{PgPool, query, query_as};
 use crate::models::issue_models::{Issue, NewIssue};
-use crate::models::workspace_models::Workspace;
+use crate::models::user_models::UserId;
+use crate::models::workspace_models::{NewWorkspace, Workspace};
 
 pub async fn get_issues(pool: Arc<PgPool>) -> impl IntoResponse {
     let issues: Vec<Issue> = query_as!(
         Issue,
         r#"
-        SELECT id, workspace_id, name, description, status, priority, created_at, updated_at
+        SELECT id, workspace_id, name, description, status, priority, assignee_id, team_id, created_by, created_at, updated_at
         FROM issues
         "#
     )
@@ -36,7 +38,7 @@ pub async fn get_issues_by_workspace_id(
     let issues: Vec<Issue> = query_as!(
         Issue,
         "
-        SELECT id, workspace_id, name, description, status, priority, created_at, updated_at
+        SELECT id, workspace_id, name, description, status, priority, assignee_id, team_id, created_by, created_at, updated_at
         FROM issues
         WHERE workspace_id = $1
         ",
@@ -49,60 +51,155 @@ pub async fn get_issues_by_workspace_id(
     Json(issues)
 }
 
-// pub async fn get_issues_by_workspace_id(workspace_id: i32, pool: &PgPool) -> impl IntoResponse {
-//     let issues: Vec<Issue> = query_as!(
-//         Issue,
-//         "
-//         SELECT id, workspace_id, name, description, status, priority, assignee_id, created_at, updated_at
-//         FROM issues
-//         WHERE workspace_id = $1
-//         ",
-//         workspace_id
-//     )
-//         .fetch_all(pool)
-//         .await?;
-//
-//     Ok(Response::json(&issues))
-// }
-//
-// pub async fn create_issue(new_issue: NewIssue, pool: &PgPool) -> impl IntoResponse {
-//     let result = query!(
-//         "
-//         INSERT INTO issues (workspace_id, name, description, status, priority, assignee_id, created_at, updated_at)
-//         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-//         RETURNING *
-//         ",
-//         new_issue.workspace_id,
-//         new_issue.name,
-//         new_issue.description,
-//         new_issue.status,
-//         new_issue.priority,
-//         new_issue.assignee_id,
-//         new_issue.created_at,
-//         new_issue.updated_at,
-//     )
-//         .fetch_one(pool)
-//         .await;
-//
-//     match result {
-//         Ok(row) => {
-//             let new_id = row.id;
-//             let response_json = json!({
-//                 "status": "success",
-//                 "message": "Issue added successfully",
-//                 "new_id": new_id,
-//             });
-//             Ok(Response::json(&response_json))
-//         }
-//         Err(_) => {
-//             let error_json = json!({
-//                 "status": "error",
-//                 "message": "Failed to create an issue",
-//             });
-//             Ok(Response::json(&error_json).status(StatusCode::InternalServerError))
-//         }
-//     }
-// }
+
+pub async fn get_my_issues_all(
+    Path(username): Path<String>,
+    pool: Arc<PgPool>) -> impl IntoResponse {
+
+    let user_id: Vec<UserId> = query_as!(
+        UserId,
+        "
+        SELECT id
+        FROM users
+        WHERE username = $1
+        ",
+        username
+    )
+        .fetch_all(&*pool)
+        .await
+        .expect("Failed to fetch user");
+
+    if let Some(first_user_id) = user_id.get(0){
+
+        let issues: Vec<Issue> = query_as!(
+        Issue,
+        "
+        SELECT id, workspace_id, name, description, status, priority, assignee_id, team_id, created_by, created_at, updated_at
+        FROM issues
+        WHERE assignee_id = $1
+        ",
+         first_user_id.id
+    )
+            .fetch_all(&*pool)
+            .await
+            .expect("Failed to fetch workspaces");
+
+        return Json(issues);
+
+    }
+
+    Json(Vec::<Issue>::new())
+
+
+}
+
+
+pub async fn get_my_issues_created(
+    Path(username): Path<String>,
+    pool: Arc<PgPool>) -> impl IntoResponse {
+
+    let user_id: Vec<UserId> = query_as!(
+        UserId,
+        "
+        SELECT id
+        FROM users
+        WHERE username = $1
+        ",
+        username
+    )
+        .fetch_all(&*pool)
+        .await
+        .expect("Failed to fetch user");
+
+    if let Some(first_user_id) = user_id.get(0){
+
+        let issues: Vec<Issue> = query_as!(
+        Issue,
+        "
+        SELECT id, workspace_id, name, description, status, priority, assignee_id, team_id, created_by, created_at, updated_at
+        FROM issues
+        WHERE assignee_id = $1 AND created_by = $2
+        ",
+         first_user_id.id,
+        first_user_id.id
+    )
+            .fetch_all(&*pool)
+            .await
+            .expect("Failed to fetch workspaces");
+
+        return Json(issues);
+
+    }
+
+    Json(Vec::<Issue>::new())
+
+
+}
+
+pub async fn create_issue(
+    Path(username): Path<String>,
+    Json(new_issue): Json<NewIssue>,
+    pool: Arc<PgPool>) -> impl IntoResponse {
+
+
+
+    let user_id: Vec<UserId> = query_as!(
+        UserId,
+        "
+        SELECT id
+        FROM users
+        WHERE username = $1
+        ",
+        username
+    )
+        .fetch_all(&*pool)
+        .await
+        .expect("Failed to fetch user");
+
+    if let Some(first_user_id) = user_id.get(0){
+
+        let result = query!(
+        "
+        INSERT INTO issues (workspace_id, name, description, status, priority, assignee_id,created_by, team_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING *
+        ",
+        new_issue.workspace_id,
+        new_issue.name,
+        new_issue.description,
+        new_issue.status,
+        new_issue.priority,
+        new_issue.assignee_id,
+       first_user_id.id,
+        new_issue.team_id
+    )
+            .fetch_one(&*pool)
+            .await;
+
+        match result {
+            Ok(row) => {
+                let new_id = row.id;
+               return  Json(json!({
+                "status": "success",
+                "message": "Workspace added successfully",
+                "new_id": new_id
+            }))
+            }
+            Err(e) => {
+                println!("Error inserting into database: {:?}", e);
+                // Handle error case
+                // You can return an error response or customize it as needed
+                // For now, let's return a generic error response
+                return Json(json!({
+                "status": "error",
+                "message": format!("Failed to create a workspace: {:?}", e)
+            }))
+            }
+        }
+
+    }
+    Json(json!([]))
+}
 //
 // pub async fn delete_issue(issue_id: i32, pool: &PgPool) -> impl IntoResponse {
 //     let result = query!(

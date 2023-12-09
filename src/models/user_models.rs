@@ -48,3 +48,14 @@ pub  struct EditUserPassoword {
 pub  struct UserEmail {
     pub  email: Option<String>,
 }
+
+
+#[derive(Debug, Serialize, Deserialize)]
+pub  struct SignUpUserEmail {
+    pub  email: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub  struct UserId {
+    pub id: i32,
+}

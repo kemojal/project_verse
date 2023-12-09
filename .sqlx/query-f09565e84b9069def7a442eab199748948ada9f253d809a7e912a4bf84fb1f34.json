@@ -37,6 +37,21 @@
         "ordinal": 6,
         "name": "updated_at",
         "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 7,
+        "name": "full_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 8,
+        "name": "username",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 9,
+        "name": "profile_picture",
+        "type_info": "Varchar"
       }
     ],
     "parameters": {
@@ -49,6 +64,9 @@
       false,
       false,
       false,
+      true,
+      true,
+      true,
       true,
       true,
       true,

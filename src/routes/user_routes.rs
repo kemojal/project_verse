@@ -3,8 +3,8 @@ use axum::extract::Path;
 use axum::{Json, Router};
 use axum::routing::{delete, get, post, put};
 use sqlx::PgPool;
-use crate::handlers::user_handlers::{create_user, delete_user, edit_user, get_users};
-use crate::models::user_models::{EditUser, NewUser};
+use crate::handlers::user_handlers::{create_user, delete_user, edit_user, get_users, signup_user};
+use crate::models::user_models::{EditUser, NewUser, SignUpUserEmail};
 
 
 pub fn user_routes(pool: Arc<PgPool>) -> Router {
@@ -12,6 +12,7 @@ pub fn user_routes(pool: Arc<PgPool>) -> Router {
 
 
     let userPool = Arc::clone(&pool);
+    let signupuserPool = Arc::clone(&pool);
     let getUserPool = Arc::clone(&pool);
     let editUserPool = Arc::clone(&pool);
     let editUserPasswordPool = Arc::clone(&pool);
@@ -23,6 +24,11 @@ pub fn user_routes(pool: Arc<PgPool>) -> Router {
         .route("/create", post(move |Json(new_user): Json<NewUser>| {
             create_user(axum::Json(new_user),userPool.clone())
         }))
+        .route("/signup", post(move |Json(new_user): Json<SignUpUserEmail>| {
+            signup_user(axum::Json(new_user), signupuserPool)
+        }))
+
+
         .route("/edit/:id", put(move |path: Path<i32>, Json(edit_user_data): Json<EditUser>| {
             edit_user(path, Json(edit_user_data), editUserPool)
         }))

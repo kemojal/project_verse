@@ -9,7 +9,9 @@ pub struct Issue {
     pub description: Option<String>,
     pub status: Option<i32>, // Use an enum or specific type for status
     pub priority: Option<i32>, // Use an enum or specific type for priority
-    // pub assignee_id: Option<i32>,
+    pub assignee_id: Option<i32>,
+    pub created_by: Option<i32>,
+    pub team_id: Option<i32>,
     pub created_at: Option<NaiveDateTime>, // Change to DateTime type based on your needs (e.g., chrono)
     pub updated_at:Option<NaiveDateTime>, // Change to DateTime type based on your needs (e.g., chrono)
 }
@@ -21,7 +23,9 @@ pub struct NewIssue {
     pub description: Option<String>,
     pub status: Option<i32>, // Use an enum or specific type for status
     pub priority: Option<i32>, // Use an enum or specific type for priority
-    // pub assignee_id: Option<i32>,
-    pub created_at: Option<NaiveDateTime>,
-    pub updated_at: Option<NaiveDateTime>,
+    pub assignee_id: Option<i32>,
+    // pub created_by: Option<i32>,
+    pub team_id: Option<i32>,
+    // pub created_at: Option<NaiveDateTime>,
+    // pub updated_at: Option<NaiveDateTime>,
 }
