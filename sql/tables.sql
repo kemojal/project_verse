@@ -1,6 +1,9 @@
 -- Create Users table
 CREATE TABLE Users (
     id SERIAL PRIMARY KEY,
+	full_name VARCHAR(100),
+	username VARCHAR(50) UNIQUE,
+	profile_picture VARCHAR(255),
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL, -- Hashed password
     verification_code VARCHAR(50),
@@ -27,7 +30,9 @@ CREATE TABLE Issues (
     description TEXT,
     status INTEGER DEFAULT 0, -- Use ENUM or integer values for status
     priority INTEGER DEFAULT 0, -- Use ENUM or integer values for priority
-    assignee_id INTEGER REFERENCES Users(id),
+	assignee_id INTEGER REFERENCES Users(id),
+	team_id INTEGER REFERENCES Teams(id) ON DELETE CASCADE,
+    created_by INTEGER REFERENCES Users(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -79,36 +84,6 @@ CREATE TABLE TeamMembers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-
--- Modify Issues table
-ALTER TABLE Issues
-ADD COLUMN team_id INTEGER REFERENCES Teams(id) ON DELETE CASCADE,
-DROP COLUMN assignee_id;
-
-
-
--- Add full_name column
-ALTER TABLE Users
-ADD COLUMN full_name VARCHAR(100);
-
--- Add username column
-ALTER TABLE Users
-ADD COLUMN username VARCHAR(50) UNIQUE;
-
--- Add profile_picture column
-ALTER TABLE Users
-ADD COLUMN profile_picture VARCHAR(255);
-
-
-Alter table issues
-Add column assignee_id INTEGER REFERENCES Users(id);
-
-
-Alter table issues
-Add column created_by INTEGER REFERENCES Users(id);
-
-
 
 CREATE TABLE user_preference (
     user_id SERIAL PRIMARY KEY,

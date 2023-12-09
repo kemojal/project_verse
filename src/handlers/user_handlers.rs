@@ -64,6 +64,27 @@ pub async fn create_user(Json(new_user): Json<NewUser>, pool: Arc<PgPool>) -> im
         let hashed_password = hash_password(&password);
         let verification_code = String::from("123456");
 
+        let email_message = Message::builder()
+            .from("ProjectVerse <kemo3855@gmail.com>".parse().unwrap())
+            .to("Receiver <kemo3855@yahoo.com>".parse().unwrap())
+            .subject("Account verification for ProjectVerse")
+            .body(String::from("Welcome to projectverse, below is the link to verify your account"))
+            .unwrap();
+
+        let creds = Credentials::new("kemo3855@gmail.com".to_string(), "bmhv cwln qigw vzhc".to_string());
+
+        // Open a remote connection to gmail
+        let mailer = SmtpTransport::relay("smtp.gmail.com")
+            .unwrap()
+            .credentials(creds)
+            .build();
+
+            // Send the email
+        match mailer.send(&email_message) {
+            Ok(_) => println!("Email sent successfully!"),
+            Err(e) => panic!("Could not send email: {:?}", e),
+        }
+
 
         
 
@@ -133,44 +154,44 @@ pub async fn signup_user(Json(new_user): Json<SignUpUserEmail>, pool: Arc<PgPool
 
         // Assuming email and verification_code are Option<String> from earlier in your code
 
-if let Some(email) = email {
-    // Unwrap the verification_code Option to get the inner String
-    if let Some(inner_verification_code) = verification_code {
-        // Call the function with the unwrapped values (Strings)
-        if let Err(err) = send_verification_email(&email, &inner_verification_code) {
-            // Handle the error if the email sending fails
-            eprintln!("Failed to send verification email: {:?}", err);
-        }
-    } else {
-        eprintln!("Verification code is missing!");
-        // Handle missing verification code error
-    }
-} else {
-    eprintln!("Email is missing!");
-    // Handle missing email error
-}
-
-
-//         let email_message = Message::builder()
-//             .from("Sender <kemo3855@gmail.com>".parse().unwrap())
-//             .to("Receiver <kemo3855@yahoo.com>".parse().unwrap())
-//             .subject("Sending email with Rust")
-//             .body(String::from("This is my first email"))
-//             .unwrap();
-
-//         let creds = Credentials::new("kemo3855@gmail.com".to_string(), "bmhv cwln qigw vzhc".to_string());
-
-// // Open a remote connection to gmail
-//         let mailer = SmtpTransport::relay("smtp.gmail.com")
-//             .unwrap()
-//             .credentials(creds)
-//             .build();
-
-// // Send the email
-//         match mailer.send(&email_message) {
-//             Ok(_) => println!("Email sent successfully!"),
-//             Err(e) => panic!("Could not send email: {:?}", e),
+// if let Some(email) = email {
+//     // Unwrap the verification_code Option to get the inner String
+//     if let Some(inner_verification_code) = verification_code {
+//         // Call the function with the unwrapped values (Strings)
+//         if let Err(err) = send_verification_email(&email, &inner_verification_code) {
+//             // Handle the error if the email sending fails
+//             eprintln!("Failed to send verification email: {:?}", err);
 //         }
+//     } else {
+//         eprintln!("Verification code is missing!");
+//         // Handle missing verification code error
+//     }
+// } else {
+//     eprintln!("Email is missing!");
+//     // Handle missing email error
+// }
+
+
+        let email_message = Message::builder()
+            .from("ProjectVerse <kemo3855@gmail.com>".parse().unwrap())
+            .to("Receiver <kemo3855@yahoo.com>".parse().unwrap())
+            .subject("Account verification for ProjectVerse")
+            .body(String::from("Welcome to projectverse, below is the link to verify your account"))
+            .unwrap();
+
+        let creds = Credentials::new("kemo3855@gmail.com".to_string(), "bmhv cwln qigw vzhc".to_string());
+
+        // Open a remote connection to gmail
+        let mailer = SmtpTransport::relay("smtp.gmail.com")
+            .unwrap()
+            .credentials(creds)
+            .build();
+
+            // Send the email
+        match mailer.send(&email_message) {
+            Ok(_) => println!("Email sent successfully!"),
+            Err(e) => panic!("Could not send email: {:?}", e),
+        }
 
         // INSERT INTO users (first_name, last_name, email, password, registration_date)
         let query_result = query!(
