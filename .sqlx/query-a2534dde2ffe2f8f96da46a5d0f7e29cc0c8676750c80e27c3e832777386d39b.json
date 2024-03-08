@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            INSERT INTO users (email, verification_code )\n            VALUES ($1, $2)\n            RETURNING *",
+  "query": "\n            INSERT INTO users (username, email, password_hash, verification_code, phone_number )\n            VALUES ($1, $2, $3, $4, $5)\n            RETURNING *",
   "describe": {
     "columns": [
       {
@@ -10,23 +10,23 @@
       },
       {
         "ordinal": 1,
-        "name": "email",
+        "name": "username",
         "type_info": "Varchar"
       },
       {
         "ordinal": 2,
-        "name": "password",
+        "name": "password_hash",
         "type_info": "Varchar"
       },
       {
         "ordinal": 3,
-        "name": "verification_code",
+        "name": "phone_number",
         "type_info": "Varchar"
       },
       {
         "ordinal": 4,
-        "name": "verified",
-        "type_info": "Bool"
+        "name": "email",
+        "type_info": "Varchar"
       },
       {
         "ordinal": 5,
@@ -40,22 +40,25 @@
       },
       {
         "ordinal": 7,
-        "name": "full_name",
+        "name": "verification_code",
         "type_info": "Varchar"
       },
       {
         "ordinal": 8,
-        "name": "username",
-        "type_info": "Varchar"
+        "name": "verified",
+        "type_info": "Bool"
       },
       {
         "ordinal": 9,
-        "name": "profile_picture",
-        "type_info": "Varchar"
+        "name": "verification_code_created_at",
+        "type_info": "Timestamp"
       }
     ],
     "parameters": {
       "Left": [
+        "Varchar",
+        "Varchar",
+        "Varchar",
         "Varchar",
         "Varchar"
       ]
@@ -64,7 +67,7 @@
       false,
       false,
       false,
-      true,
+      false,
       true,
       true,
       true,
@@ -73,5 +76,5 @@
       true
     ]
   },
-  "hash": "94453c5433d29ae604cf9d12dd12bab538e6f8c1c9cbcc571a4d4f5816c47a15"
+  "hash": "a2534dde2ffe2f8f96da46a5d0f7e29cc0c8676750c80e27c3e832777386d39b"
 }

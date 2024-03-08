@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        UPDATE users\n        SET password = coalesce($2, password)\n        WHERE id = $1\n        RETURNING *",
+  "query": "\n        SELECT id, email, password_hash, verification_code,  verified,  created_at, updated_at FROM users\n        ",
   "describe": {
     "columns": [
       {
@@ -15,7 +15,7 @@
       },
       {
         "ordinal": 2,
-        "name": "password",
+        "name": "password_hash",
         "type_info": "Varchar"
       },
       {
@@ -37,41 +37,20 @@
         "ordinal": 6,
         "name": "updated_at",
         "type_info": "Timestamp"
-      },
-      {
-        "ordinal": 7,
-        "name": "full_name",
-        "type_info": "Varchar"
-      },
-      {
-        "ordinal": 8,
-        "name": "username",
-        "type_info": "Varchar"
-      },
-      {
-        "ordinal": 9,
-        "name": "profile_picture",
-        "type_info": "Varchar"
       }
     ],
     "parameters": {
-      "Left": [
-        "Int4",
-        "Varchar"
-      ]
+      "Left": []
     },
     "nullable": [
       false,
+      true,
       false,
-      false,
-      true,
-      true,
-      true,
       true,
       true,
       true,
       true
     ]
   },
-  "hash": "f09565e84b9069def7a442eab199748948ada9f253d809a7e912a4bf84fb1f34"
+  "hash": "175f56b6dd5a58a63965216ea407ac2049a666975b316389ac446bb1c82a2905"
 }

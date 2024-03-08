@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT id, email, password, verification_code,  verified,  created_at, updated_at FROM users\n        ",
+  "query": "SELECT id, email, verified, verification_code, verification_code_created_at FROM users WHERE email = $1 AND verification_code = $2",
   "describe": {
     "columns": [
       {
@@ -15,8 +15,8 @@
       },
       {
         "ordinal": 2,
-        "name": "password",
-        "type_info": "Varchar"
+        "name": "verified",
+        "type_info": "Bool"
       },
       {
         "ordinal": 3,
@@ -25,26 +25,17 @@
       },
       {
         "ordinal": 4,
-        "name": "verified",
-        "type_info": "Bool"
-      },
-      {
-        "ordinal": 5,
-        "name": "created_at",
-        "type_info": "Timestamp"
-      },
-      {
-        "ordinal": 6,
-        "name": "updated_at",
+        "name": "verification_code_created_at",
         "type_info": "Timestamp"
       }
     ],
     "parameters": {
-      "Left": []
+      "Left": [
+        "Text",
+        "Text"
+      ]
     },
     "nullable": [
-      false,
-      false,
       false,
       true,
       true,
@@ -52,5 +43,5 @@
       true
     ]
   },
-  "hash": "b0c07f2e552d883e4e37dd759d3165ddc11740761c728b69bc0d0d007a2179ec"
+  "hash": "7021629382b89f77fb53b6e0ea323f826cabd0c9e38d30a5b68f4bc4e481d68e"
 }

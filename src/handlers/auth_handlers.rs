@@ -19,7 +19,7 @@ pub async fn sign_in(Json(signin_data): Json<SignInData>, pool: Arc<PgPool>) -> 
     // "SELECT id, email, password, first_name, last_name FROM users WHERE email = $1"
     let user: Option<AuthUser> = query_as!(
         AuthUser,
-        "SELECT id, email, full_name, username, profile_picture, password, verified, created_at, updated_at FROM users WHERE email = $1",
+        "SELECT id, email,  username,  password_hash, verified, created_at, updated_at FROM users WHERE email = $1",
         user_email
     )
         .fetch_optional(&*pool)
@@ -32,16 +32,16 @@ pub async fn sign_in(Json(signin_data): Json<SignInData>, pool: Arc<PgPool>) -> 
 
         // if let (Some(id), Some(email), Some(hashed_password), Some(first_name), Some(last_name)) = (user.id, user.email, user.password, user.first_name, user.last_name) {
         // if let (Some(id), Some(email), Some(hashed_password), Some(verified), Some(created_at), Some(updated_at), Some(full_name), Some(username), Some(profile_picture)) = (user.id, user.email, user.password, user.verified, user.created_at, user.updated_at, user.full_name, user.username, user.profile_picture ) {
-            if let (Some(id), Some(email), Some(hashed_password)) = (user.id, user.email, user.password ) {
-            if bcrypt::verify(&user_password, &hashed_password).expect("Failed to verify password") {
+            if let (Some(id), Some(email), Some(password_hash)) = (user.id, user.email, user.password_hash ) {
+            if bcrypt::verify(&user_password, &password_hash).expect("Failed to verify password") {
 
                 let jwt_secret = "CfLTk9J0MA3jBF3/zuE4VUyN7djM2KMPy4otUpbkbE8=";
                 let expiration = Utc::now() + Duration::hours(1);
 
 
-                let full_name = user.full_name.unwrap_or_else(|| "Unknown".to_string());
+                // let full_name = user.username.unwrap_or_else(|| "Unknown".to_string());
                 let username = user.username.unwrap_or_else(|| "Unknown".to_string());
-                let profile_picture = user.profile_picture.unwrap_or_else(|| "Unknown".to_string());
+                // let profile_picture = user.profile_picture.unwrap_or_else(|| "Unknown".to_string());
                 let verified = Some(user.verified).is_some();
                 let created_at = if let Some(created_at) = user.created_at {
                     created_at
@@ -58,9 +58,9 @@ pub async fn sign_in(Json(signin_data): Json<SignInData>, pool: Arc<PgPool>) -> 
                 let my_claims = Claims {
                     email: email.to_owned(),
                     verified,
-                    full_name,
+                    // full_name,
                     username,
-                    profile_picture,
+                    // profile_picture,
                     user_id: id.to_owned(),
                     created_at,
                     updated_at,

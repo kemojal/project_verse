@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT id, user_id, name, url_slug, created_at, updated_at FROM workspaces\n        ",
+  "query": "SELECT id, email, password_hash, verification_code,  verified,  created_at, updated_at FROM users WHERE email = $1",
   "describe": {
     "columns": [
       {
@@ -10,41 +10,49 @@
       },
       {
         "ordinal": 1,
-        "name": "user_id",
-        "type_info": "Int4"
+        "name": "email",
+        "type_info": "Varchar"
       },
       {
         "ordinal": 2,
-        "name": "name",
+        "name": "password_hash",
         "type_info": "Varchar"
       },
       {
         "ordinal": 3,
-        "name": "url_slug",
+        "name": "verification_code",
         "type_info": "Varchar"
       },
       {
         "ordinal": 4,
+        "name": "verified",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 5,
         "name": "created_at",
         "type_info": "Timestamp"
       },
       {
-        "ordinal": 5,
+        "ordinal": 6,
         "name": "updated_at",
         "type_info": "Timestamp"
       }
     ],
     "parameters": {
-      "Left": []
+      "Left": [
+        "Text"
+      ]
     },
     "nullable": [
       false,
       true,
       false,
-      false,
+      true,
+      true,
       true,
       true
     ]
   },
-  "hash": "9360b0fef04de0f7259642e08572ef9d998fadb54cee3fffaa1107a7c3ee711d"
+  "hash": "98e6a00602b6746aade8ae1a3910bc20f7475d91ecad6290af94455889a7af7d"
 }

@@ -12,13 +12,13 @@ pub struct SignInData {
 pub  struct AuthUser {
     pub  id: Option<i32>,
     pub  email: Option<String>,
-    pub  password: Option<String>,
+    pub  password_hash: Option<String>,
     pub verified: Option<bool>,
     pub created_at: Option<NaiveDateTime>,
     pub updated_at: Option<NaiveDateTime>,
-    pub full_name: Option<String>,
+    // pub full_name: Option<String>,
     pub username: Option<String>,
-    pub  profile_picture: Option<String>
+    // pub  profile_picture: Option<String>
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -29,9 +29,9 @@ pub struct Claims {
     pub verified: bool,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-    pub full_name: String,
+    // pub full_name: String,
     pub username: String,
-    pub  profile_picture: String,
+    // pub  profile_picture: String,
     pub user_id: i32,
     // pub verified: bool,
     // pub created_at: NaiveDateTime,

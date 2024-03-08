@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT id, user_id, name, url_slug, created_at, updated_at FROM workspaces WHERE user_id = $1\n        ",
+  "query": "\n        SELECT id, user_id, balance, currency, created_at, updated_at\n        FROM wallets\n        ",
   "describe": {
     "columns": [
       {
@@ -15,12 +15,12 @@
       },
       {
         "ordinal": 2,
-        "name": "name",
-        "type_info": "Varchar"
+        "name": "balance",
+        "type_info": "Numeric"
       },
       {
         "ordinal": 3,
-        "name": "url_slug",
+        "name": "currency",
         "type_info": "Varchar"
       },
       {
@@ -35,18 +35,16 @@
       }
     ],
     "parameters": {
-      "Left": [
-        "Int4"
-      ]
+      "Left": []
     },
     "nullable": [
       false,
-      true,
       false,
+      true,
       false,
       true,
       true
     ]
   },
-  "hash": "3ba86b8192061bca3bfd42d5785c3f2011173b668e50b7782b9b2bf8b071733d"
+  "hash": "d89575c386f3f024d38e944a9efb4f8743a7dbd56354577e9fc22df6e4704853"
 }

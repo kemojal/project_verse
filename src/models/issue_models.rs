@@ -12,6 +12,8 @@ pub struct Issue {
     pub assignee_id: Option<i32>,
     pub created_by: Option<i32>,
     pub team_id: Option<i32>,
+    pub parent_id: Option<i32>,
+    pub url_slug: Option<String>,
     pub created_at: Option<NaiveDateTime>, // Change to DateTime type based on your needs (e.g., chrono)
     pub updated_at:Option<NaiveDateTime>, // Change to DateTime type based on your needs (e.g., chrono)
 }
@@ -26,6 +28,8 @@ pub struct NewIssue {
     pub assignee_id: Option<i32>,
     // pub created_by: Option<i32>,
     pub team_id: Option<i32>,
+    pub parent_id: Option<i32>,
+    pub url_slug: Option<String>,
     // pub created_at: Option<NaiveDateTime>,
     // pub updated_at: Option<NaiveDateTime>,
 }

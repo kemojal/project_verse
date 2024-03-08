@@ -1,6 +1,8 @@
 pub mod workspace_routes;
 pub mod auth_routes;
 pub mod user_routes;
+pub mod wallet_routes;
+pub mod transaction_routes;
 pub mod issue_routes;
 // pub mod auth_routes;
 // pub mod barbershop_routes;

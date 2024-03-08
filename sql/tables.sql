@@ -49,7 +49,7 @@ CREATE TABLE Labels (
 CREATE TABLE SubIssues (
     id SERIAL PRIMARY KEY,
     issue_id INTEGER REFERENCES Issues(id) ON DELETE CASCADE,
-    parent_issue_id INTEGER REFERENCES Issues(id) ON DELETE CASCADE,
+    parent_id INTEGER REFERENCES Issues(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     status INTEGER DEFAULT 0, -- Use ENUM or integer values for status

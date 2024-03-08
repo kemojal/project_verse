@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            INSERT INTO users (email, password, verification_code )\n            VALUES ($1, $2, $3)\n            RETURNING *",
+  "query": "SELECT id, email,  username,  password_hash, verified, created_at, updated_at FROM users WHERE email = $1",
   "describe": {
     "columns": [
       {
@@ -15,12 +15,12 @@
       },
       {
         "ordinal": 2,
-        "name": "password",
+        "name": "username",
         "type_info": "Varchar"
       },
       {
         "ordinal": 3,
-        "name": "verification_code",
+        "name": "password_hash",
         "type_info": "Varchar"
       },
       {
@@ -37,42 +37,22 @@
         "ordinal": 6,
         "name": "updated_at",
         "type_info": "Timestamp"
-      },
-      {
-        "ordinal": 7,
-        "name": "full_name",
-        "type_info": "Varchar"
-      },
-      {
-        "ordinal": 8,
-        "name": "username",
-        "type_info": "Varchar"
-      },
-      {
-        "ordinal": 9,
-        "name": "profile_picture",
-        "type_info": "Varchar"
       }
     ],
     "parameters": {
       "Left": [
-        "Varchar",
-        "Varchar",
-        "Varchar"
+        "Text"
       ]
     },
     "nullable": [
       false,
+      true,
       false,
       false,
-      true,
-      true,
-      true,
-      true,
       true,
       true,
       true
     ]
   },
-  "hash": "67c9a9d1301f370ee09eec149e8b41198727101b447cefaa74305c7e7e274eed"
+  "hash": "38dc99242a45bf338a481b50542962b848fbcaf230dc1c20c2e3e7a2f0e9e1dc"
 }

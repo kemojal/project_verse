@@ -26,7 +26,7 @@ VALUES
     (2, 'Enhancement', '#0000FF');
 
 -- Sample data for SubIssues table
-INSERT INTO SubIssues (issue_id, parent_issue_id, name, description, status, priority, assignee_id, created_at, updated_at)
+INSERT INTO SubIssues (issue_id, parent_id, name, description, status, priority, assignee_id, created_at, updated_at)
 VALUES
     (1, NULL, 'Sub-task 1', 'Description for Sub-task 1', 0, 2, 2, '2023-01-15', '2023-01-15'),
     (1, NULL, 'Sub-task 2', 'Description for Sub-task 2', 1, 3, 1, '2023-01-16', '2023-01-16');

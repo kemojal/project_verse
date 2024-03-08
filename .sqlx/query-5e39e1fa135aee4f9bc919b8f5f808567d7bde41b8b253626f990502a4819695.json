@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        INSERT INTO workspaces (user_id, name, url_slug, created_at, updated_at)\n        VALUES ($1, $2, $3, $4, $5)\n        RETURNING *",
+  "query": "\n                            SELECT id, user_id, balance, currency, created_at, updated_at\n                            FROM wallets\n                            WHERE user_id = $1\n                            ",
   "describe": {
     "columns": [
       {
@@ -15,12 +15,12 @@
       },
       {
         "ordinal": 2,
-        "name": "name",
-        "type_info": "Varchar"
+        "name": "balance",
+        "type_info": "Numeric"
       },
       {
         "ordinal": 3,
-        "name": "url_slug",
+        "name": "currency",
         "type_info": "Varchar"
       },
       {
@@ -36,21 +36,17 @@
     ],
     "parameters": {
       "Left": [
-        "Int4",
-        "Varchar",
-        "Varchar",
-        "Timestamp",
-        "Timestamp"
+        "Int4"
       ]
     },
     "nullable": [
       false,
-      true,
       false,
+      true,
       false,
       true,
       true
     ]
   },
-  "hash": "77b336b4c1f890b4b5f9cc1fbb00c0b65cc6cf0596585276ef6959af1373c3b3"
+  "hash": "5e39e1fa135aee4f9bc919b8f5f808567d7bde41b8b253626f990502a4819695"
 }

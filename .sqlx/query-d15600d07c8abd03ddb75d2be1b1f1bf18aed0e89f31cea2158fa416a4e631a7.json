@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT id, email, full_name, username, profile_picture, password, verified, created_at, updated_at FROM users WHERE email = $1",
+  "query": "\n        UPDATE users\n        SET password_hash = coalesce($2, password_hash)\n        WHERE id = $1\n        RETURNING *",
   "describe": {
     "columns": [
       {
@@ -10,61 +10,68 @@
       },
       {
         "ordinal": 1,
-        "name": "email",
-        "type_info": "Varchar"
-      },
-      {
-        "ordinal": 2,
-        "name": "full_name",
-        "type_info": "Varchar"
-      },
-      {
-        "ordinal": 3,
         "name": "username",
         "type_info": "Varchar"
       },
       {
+        "ordinal": 2,
+        "name": "password_hash",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "phone_number",
+        "type_info": "Varchar"
+      },
+      {
         "ordinal": 4,
-        "name": "profile_picture",
+        "name": "email",
         "type_info": "Varchar"
       },
       {
         "ordinal": 5,
-        "name": "password",
-        "type_info": "Varchar"
-      },
-      {
-        "ordinal": 6,
-        "name": "verified",
-        "type_info": "Bool"
-      },
-      {
-        "ordinal": 7,
         "name": "created_at",
         "type_info": "Timestamp"
       },
       {
-        "ordinal": 8,
+        "ordinal": 6,
         "name": "updated_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 7,
+        "name": "verification_code",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 8,
+        "name": "verified",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 9,
+        "name": "verification_code_created_at",
         "type_info": "Timestamp"
       }
     ],
     "parameters": {
       "Left": [
-        "Text"
+        "Int4",
+        "Varchar"
       ]
     },
     "nullable": [
       false,
       false,
-      true,
-      true,
-      true,
       false,
+      false,
+      true,
+      true,
+      true,
       true,
       true,
       true
     ]
   },
-  "hash": "b62f49460af1ba99bdd364d0badb53f9c753eeaf514c098fcb541b2d73f0fc42"
+  "hash": "d15600d07c8abd03ddb75d2be1b1f1bf18aed0e89f31cea2158fa416a4e631a7"
 }

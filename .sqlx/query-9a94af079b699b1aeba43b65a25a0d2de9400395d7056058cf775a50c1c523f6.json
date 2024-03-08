@@ -10,23 +10,23 @@
       },
       {
         "ordinal": 1,
-        "name": "email",
+        "name": "username",
         "type_info": "Varchar"
       },
       {
         "ordinal": 2,
-        "name": "password",
+        "name": "password_hash",
         "type_info": "Varchar"
       },
       {
         "ordinal": 3,
-        "name": "verification_code",
+        "name": "phone_number",
         "type_info": "Varchar"
       },
       {
         "ordinal": 4,
-        "name": "verified",
-        "type_info": "Bool"
+        "name": "email",
+        "type_info": "Varchar"
       },
       {
         "ordinal": 5,
@@ -40,18 +40,18 @@
       },
       {
         "ordinal": 7,
-        "name": "full_name",
+        "name": "verification_code",
         "type_info": "Varchar"
       },
       {
         "ordinal": 8,
-        "name": "username",
-        "type_info": "Varchar"
+        "name": "verified",
+        "type_info": "Bool"
       },
       {
         "ordinal": 9,
-        "name": "profile_picture",
-        "type_info": "Varchar"
+        "name": "verification_code_created_at",
+        "type_info": "Timestamp"
       }
     ],
     "parameters": {
@@ -64,7 +64,7 @@
       false,
       false,
       false,
-      true,
+      false,
       true,
       true,
       true,
