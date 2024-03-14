@@ -1,0 +1,100 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            t.id,\n            t.sender_id,\n            t.recipient_id,\n            t.amount,\n            t.currency,\n            t.status,\n            t.transaction_type,\n            t.transaction_date,\n            s.username as sender_username,\n            s.phone_number as sender_phone_number,\n            s.email as sender_email,\n            r.username as recipient_username,\n            r.phone_number as recipient_phone_number,\n            r.email as recipient_email\n        FROM transactions t\n        LEFT JOIN users s ON t.sender_id = s.id\n        LEFT JOIN users r ON t.recipient_id = r.id\n        WHERE s.phone_number = $1 OR r.phone_number = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "sender_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "recipient_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "amount",
+        "type_info": "Numeric"
+      },
+      {
+        "ordinal": 4,
+        "name": "currency",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "status",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "transaction_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "transaction_date",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 8,
+        "name": "sender_username",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 9,
+        "name": "sender_phone_number",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 10,
+        "name": "sender_email",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 11,
+        "name": "recipient_username",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 12,
+        "name": "recipient_phone_number",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 13,
+        "name": "recipient_email",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "ea96f27ce6e87873e5575e483b492e3dc87f4aefe5757f2556eec4e567372b9c"
+}

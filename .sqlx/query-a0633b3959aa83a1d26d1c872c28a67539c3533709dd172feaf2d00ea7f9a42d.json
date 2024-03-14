@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT id, email,  username,  password_hash, verified, created_at, updated_at FROM users WHERE email = $1",
+  "query": "SELECT id, email,   username, phone_number, password_hash, verified, created_at, updated_at FROM users WHERE email = $1",
   "describe": {
     "columns": [
       {
@@ -20,21 +20,26 @@
       },
       {
         "ordinal": 3,
-        "name": "password_hash",
+        "name": "phone_number",
         "type_info": "Varchar"
       },
       {
         "ordinal": 4,
+        "name": "password_hash",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
         "name": "verified",
         "type_info": "Bool"
       },
       {
-        "ordinal": 5,
+        "ordinal": 6,
         "name": "created_at",
         "type_info": "Timestamp"
       },
       {
-        "ordinal": 6,
+        "ordinal": 7,
         "name": "updated_at",
         "type_info": "Timestamp"
       }
@@ -49,10 +54,11 @@
       true,
       false,
       false,
+      false,
       true,
       true,
       true
     ]
   },
-  "hash": "38dc99242a45bf338a481b50542962b848fbcaf230dc1c20c2e3e7a2f0e9e1dc"
+  "hash": "a0633b3959aa83a1d26d1c872c28a67539c3533709dd172feaf2d00ea7f9a42d"
 }

@@ -88,3 +88,9 @@ pub struct AuthorizedUser {
     pub email: Option<String>,
     
 }
+
+
+#[derive(Debug, Serialize, Deserialize)]
+pub  struct BalanceAmount {
+    pub total_paid: i32
+}

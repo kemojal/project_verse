@@ -52,6 +52,11 @@
         "ordinal": 9,
         "name": "verification_code_created_at",
         "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 10,
+        "name": "user_type",
+        "type_info": "Int4"
       }
     ],
     "parameters": {
@@ -65,6 +70,7 @@
       false,
       false,
       false,
+      true,
       true,
       true,
       true,

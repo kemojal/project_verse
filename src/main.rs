@@ -30,6 +30,7 @@ use routes::{
     wallet_routes::wallet_routes,
     transaction_routes::transaction_routes,
     auth_routes::auth_routes,
+    merchant_routes::merchant_routes,
     // issue_routes:: issue_routes,
     // barbershop_routes::barbershop_routes,
     // client_routes::client_routes,
@@ -45,6 +46,7 @@ fn app_routes(pool: Arc<PgPool>) -> Router {
     let wallet_pool  = pool.clone();
     let transaction_pool  = pool.clone();
     let auth_pool = pool.clone();
+    let merchant_pool = pool.clone();
     // let issue_pool = pool.clone();
 
     Router::new()
@@ -53,6 +55,7 @@ fn app_routes(pool: Arc<PgPool>) -> Router {
         .nest("/api/wallet", wallet_routes(wallet_pool))
         .nest("/api/transactions", transaction_routes(transaction_pool))
         .nest("/api/auth", auth_routes(auth_pool))
+        .nest("/api/merchant", merchant_routes(merchant_pool))
         // .nest("/api/issue", issue_routes(issue_pool))
 }
 

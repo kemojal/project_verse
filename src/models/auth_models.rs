@@ -18,6 +18,7 @@ pub  struct AuthUser {
     pub updated_at: Option<NaiveDateTime>,
     // pub full_name: Option<String>,
     pub username: Option<String>,
+    pub phone_number: Option<String>,
     // pub  profile_picture: Option<String>
 }
 
@@ -31,6 +32,7 @@ pub struct Claims {
     pub updated_at: NaiveDateTime,
     // pub full_name: String,
     pub username: String,
+    pub phone_number: String,
     // pub  profile_picture: String,
     pub user_id: i32,
     // pub verified: bool,

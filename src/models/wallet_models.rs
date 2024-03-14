@@ -21,10 +21,17 @@ pub struct NewWallet {
     pub currency: Option<String>,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Balance {
+    pub balance: Option<sqlx::types::BigDecimal>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct DepositAmount {
     pub amount: Option<sqlx::types::BigDecimal>,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct WithdrawAmount {
     pub amount: Option<sqlx::types::BigDecimal>,
 }

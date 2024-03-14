@@ -2,7 +2,7 @@ use axum::extract::Path;
 use axum::http::response;
 use std::sync::Arc;
 
-use crate::models::transaction_models::{NewTransaction, Transaction};
+use crate::models::transaction_models::{NewTransaction, Transaction, TransactionWithUserDetails};
 use crate::models::user_models::{
     EditUser, EditUserPassoword, NewUser, SignUpUserEmail, User, UserEmail, UserId,
     UserPhoneNumber, UserToVerify, VerifyUser,
@@ -24,37 +24,81 @@ use lettre::{Message, SmtpTransport, Transport};
 
 use reqwest::{Client, StatusCode};
 
-pub async fn get_user_transactions(Path(phone_number): Path<String>, pool: Arc<PgPool>) -> impl IntoResponse {
-    // Fetch user_id from the users table based on phone number
-    let user_id: Option<UserId> = match query_as!(
-            UserId,
-            "SELECT id FROM users WHERE phone_number = $1",
-            phone_number
-        )
-        .fetch_optional(&*pool)
-        .await {
-            Ok(result) => result,
-            Err(_) => return StatusCode::INTERNAL_SERVER_ERROR,
-        };
+// pub async fn get_user_transactions(Path(phone_number): Path<String>, pool: Arc<PgPool>) -> impl IntoResponse {
+//     // Fetch user_id from the users table based on phone number
+    
 
-    // If user_id is found, fetch transactions
-    if let Some(user_id) = user_id {
-        let transactions: Vec<Transaction> = match query_as!(
-            Transaction,
-            "SELECT sender_id, recipient_id, amount, currency, status, transaction_type, transaction_date FROM transactions WHERE sender_id = $1",
-            user_id
-        )
-        .fetch_all(&*pool)
-        .await {
-            Ok(result) => result,
-            Err(_) =>     ,
-        };
-        json(&transactions)
-    } else {
-        // If user_id is not found, return empty array
-        json(&[])
-    }
+//     // If user_id is found, fetch transactions
+   
+//     let user_id: Vec<UserId> = query_as!(
+//                 UserId,
+//                 "
+//                 SELECT id
+//                 FROM users
+//                 WHERE phone_number = $1
+//                 ",
+//                 phone_number
+//             )
+//                 .fetch_all(&*pool)
+//                 .await
+//                 .expect("Failed to fetch user_ id");
+        
+//             if let Some(first_user_id) = user_id.get(0){
+        
+//                 let transactions: Vec<Transaction> = query_as!(
+//                 Transaction,
+//                 "
+//                 SELECT id, sender_id, recipient_id, amount, currency, status, transaction_type, transaction_date
+//                 FROM transactions
+//                 WHERE sender_id = $1 OR recipient_id = $2
+//                 ",
+//                 first_user_id.id,
+//                 first_user_id.id
+//             )
+//                     .fetch_all(&*pool)
+//                     .await
+//                     .expect("Failed to fetch workspaces");
+        
+//                 return Json(transactions);
+        
+//             }
+        
+//             Json(Vec::<Transaction>::new())
+// }
+
+pub async fn get_user_transactions(Path(phone_number): Path<String>, pool: Arc<PgPool>) -> impl IntoResponse {
+    let transactions: Vec<TransactionWithUserDetails> = query_as!(
+        TransactionWithUserDetails,
+        r#"
+        SELECT
+            t.id,
+            t.sender_id,
+            t.recipient_id,
+            t.amount,
+            t.currency,
+            t.status,
+            t.transaction_type,
+            t.transaction_date,
+            s.username as sender_username,
+            s.phone_number as sender_phone_number,
+            s.email as sender_email,
+            r.username as recipient_username,
+            r.phone_number as recipient_phone_number,
+            r.email as recipient_email
+        FROM transactions t
+        LEFT JOIN users s ON t.sender_id = s.id
+        LEFT JOIN users r ON t.recipient_id = r.id
+        WHERE s.phone_number = $1 OR r.phone_number = $1
+        "#,
+        phone_number
+    )
+    .fetch_all(&*pool)
+    .await
+    .expect("Failed to fetch transactions with user details");
+
+    Json(transactions)
 }
+
 
 // pub async fn get_user_profile(Path(email): Path<String>, pool: Arc<PgPool>) -> impl IntoResponse {
 //     let user: Vec<User> = query_as!(
