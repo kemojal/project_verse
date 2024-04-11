@@ -1,12 +1,12 @@
 use std::sync::Arc;
 use axum::{Json, Router};
-use axum::extract::Path;
-use axum::routing::{delete, get, post, put};
+
+use axum::routing::post;
 use sqlx::PgPool;
 use crate::handlers::auth_handlers::{sign_in, sign_out};
 use crate::models::auth_models::SignInData;
 
-pub fn auth_routes(pool: Arc<PgPool>) -> Router {
+pub fn auth_routes(pool: Arc<PgPool>) -> Router<Arc<PgPool>>  {
 
 
     let authPool = Arc::clone(&pool);

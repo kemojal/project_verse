@@ -1,15 +1,15 @@
-use axum::extract::Path;
+use axum::extract::{Path, State};
 use std::sync::Arc;
 
 use crate::models::user_models::{
-    BalanceAmount, EditUser, EditUserPassoword, NewUser, SignUpUserEmail, User, UserEmail, UserId,
-    UserPhoneNumber, UserToVerify, VerifyUser,
+    EditUser, EditUserPassoword, NewUser, User, UserEmail, UserId, UserPhoneNumber, UserToVerify,
+    VerifyUser,
 };
 use crate::models::wallet_models::Balance;
 use axum::response::IntoResponse;
 use axum::Json;
 use bcrypt::{hash, DEFAULT_COST};
-use chrono::{DateTime, Duration, NaiveDateTime, TimeZone, Utc};
+use chrono::{DateTime, Duration, Utc};
 use lettre::message::Mailbox;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
@@ -22,7 +22,10 @@ use lettre::{Message, SmtpTransport, Transport};
 
 use reqwest::Client;
 
-pub async fn get_users(pool: Arc<PgPool>) -> impl IntoResponse {
+pub async fn get_users(
+    State(pool): State<Arc<PgPool>>,
+    // pool: Arc<PgPool>
+) -> impl IntoResponse {
     let users: Vec<User> = query_as!(
         User,
         r#"
@@ -36,7 +39,11 @@ pub async fn get_users(pool: Arc<PgPool>) -> impl IntoResponse {
     Json(users)
 }
 
-pub async fn get_user_profile(Path(email): Path<String>, pool: Arc<PgPool>) -> impl IntoResponse {
+pub async fn get_user_profile(
+    Path(email): Path<String>,
+    // pool: Arc<PgPool>
+    State(pool): State<Arc<PgPool>>,
+) -> impl IntoResponse {
     let user: Vec<User> = query_as!(
         User,
         "SELECT id, email, password_hash, verification_code,  verified,  created_at, updated_at FROM users WHERE email = $1",
@@ -49,7 +56,10 @@ pub async fn get_user_profile(Path(email): Path<String>, pool: Arc<PgPool>) -> i
     Json(user)
 }
 
-pub async fn get_user_balance(Path(email): Path<String>, pool: Arc<PgPool>) -> impl IntoResponse {
+pub async fn get_user_balance(
+    Path(email): Path<String>,
+    State(pool): State<Arc<PgPool>>,
+) -> impl IntoResponse {
     let db_user_id: Vec<UserId> = query_as!(UserId, "SELECT id FROM users WHERE email = $1", email)
         .fetch_all(&*pool)
         .await
@@ -346,7 +356,8 @@ pub async fn create_user(Json(new_user): Json<NewUser>, pool: Arc<PgPool>) -> im
 pub async fn verify_user(
     Path(email): Path<String>,
     Json(verification_data): Json<VerifyUser>,
-    pool: Arc<PgPool>,
+    pool: Arc<PgPool>
+    // State(pool): State<Arc<PgPool>>,
 ) -> impl IntoResponse {
     let code = verification_data.verification_code;
 
@@ -411,7 +422,8 @@ pub async fn verify_user(
 
 pub async fn resend_verification_code(
     Path(email): Path<String>,
-    pool: Arc<PgPool>,
+    // pool: Arc<PgPool>,
+    State(pool): State<Arc<PgPool>>,
 ) -> impl IntoResponse {
     // Generate a new verification code
     let new_verification_code: String = generate_verification_code();
@@ -571,6 +583,7 @@ pub async fn edit_user(
     Path(id): Path<i32>,
     edit_user_data: Json<EditUser>,
     pool: Arc<PgPool>,
+    // State(pool): State<Arc<PgPool>>,
 ) -> impl IntoResponse {
     // let first_name = edit_user_data.first_name.clone();
     // let last_name = edit_user_data.last_name.clone();
@@ -658,7 +671,11 @@ pub async fn edit_user_password(
     }
 }
 
-pub async fn delete_user(Path(id): Path<i32>, pool: Arc<PgPool>) -> impl IntoResponse {
+pub async fn delete_user(
+    Path(id): Path<i32>,
+    // pool: Arc<PgPool>
+    State(pool): State<Arc<PgPool>>,
+) -> impl IntoResponse {
     println!("delete_todo id = {}", id);
 
     // Use the id to delete the item from the database
@@ -685,3 +702,6 @@ fn hash_password(password: &str) -> String {
     let password_hash = hash(password, DEFAULT_COST).expect("Failed to hash password");
     password_hash
 }
+
+
+// struct Path<T>(T);

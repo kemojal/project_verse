@@ -4,6 +4,7 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
 
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Wallet {
     pub id: i32,
@@ -35,5 +36,10 @@ pub struct DepositAmount {
 pub struct WithdrawAmount {
     pub amount: Option<sqlx::types::BigDecimal>,
 }
+
+
+
+
+
 
 

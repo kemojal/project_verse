@@ -1,11 +1,11 @@
-use crate::models::issue_models::{Issue, NewIssue};
-use crate::models::merchant_models::{Merchant, MerchantId, NewMerchant};
+use crate::models::merchant_models::{EditMerchant, Merchant, MerchantId, NewMerchant};
 use crate::models::user_models::UserId;
 use axum::extract::Path;
-use axum::response::{IntoResponse, Json, Response};
-use chrono::expect;
+use axum::response::{IntoResponse, Json};
+
+use reqwest::StatusCode;
 use serde_json::json;
-use sqlx::{pool, query, query_as, PgPool};
+use sqlx::{query, query_as, PgPool};
 use std::sync::Arc;
 
 pub async fn create_merchant(
@@ -151,112 +151,74 @@ pub async fn get_merchant(Path(username): Path<String>, pool: Arc<PgPool>) -> im
     })
 }
 
-// pub async fn edit_merchant(
-//     Path(username): Path<String>,
-//     Json(new_merchant): Json<NewMerchant>,
-//     pool: Arc<PgPool>,
-// ) -> impl IntoResponse {
-//     let user_id: Vec<UserId> = query_as!(
-//         UserId,
-//         "
-//         SELECT id
-//         FROM users
-//         WHERE username = $1
-//         ",
-//         username
-//     )
-//     .fetch_all(&*pool)
-//     .await
-//     .expect("Failed to fetch user");
+pub async fn edit_merchant(
+    Path(merchant_id): Path<i32>,
+    Json(payload): Json<EditMerchant>,
+    pool: Arc<PgPool>,
+) -> impl IntoResponse {
+    // Check if the merchant exists
+    // let merchant_exists = query!("SELECT EXISTS(SELECT 1 FROM merchants WHERE id = $1)", id)
+    //     .fetch_one(&*pool)
+    //     .await
+    //     .map(|row| row.exists)
+    //     .unwrap_or(false);
 
-//     if let Some(first_user_id) = user_id.get(0) {
-//         let result = query!(
-//             "
-//             UPDATE merchants
-//             SET description = $1,
-//                 business_name = $2,
-//                 business_type = $3,
-//                 address = $4,
-//                 business_phone_number = $5,
-//                 website = $6,
-//                 edited_at = CURRENT_TIMESTAMP
-//             WHERE user_id = $7
-//             RETURNING *
-//             ",
-//             new_merchant.description,
-//             new_merchant.business_name,
-//             new_merchant.business_type,
-//             new_merchant.address,
-//             new_merchant.business_phone_number,
-//             new_merchant.website,
-//             first_user_id.id
-//         )
-//         .fetch_one(&*pool)
-//         .await;
+    // if !merchant_exists {
+    //     return (StatusCode::NOT_FOUND, Json("Merchant not found")).into_response();
+    // }
 
-//         match result {
-//             Ok(row) => {
-//                 return Json(json!({
-//                     "status": "success",
-//                     "message": "Merchant updated successfully",
-//                     "updated_merchant": row
-//                 }));
-//             }
-//             Err(e) => {
-//                 println!("Error updating merchant: {:?}", e);
-//                 return Json(json!({
-//                     "status": "error",
-//                     "message": format!("Failed to update merchant: {:?}", e)
-//                 }));
-//             }
-//         }
-//     }
-//     Json(json!([]))
-// }
+    // Update the merchant details in the database
+    let result = sqlx::query(
+        "UPDATE merchants SET description = $1, business_name = $2, business_type = $3, address = $4, business_phone_number = $5, website = $6, edited_at = $7 WHERE id = $8",
+    )
+    .bind(&payload.description)
+    .bind(&payload.business_name)
+    .bind(payload.business_type)
+    .bind(payload.address)
+    .bind(payload.business_phone_number)
+    .bind(payload.website)
+    .bind(payload.edited_at)
+    .bind(merchant_id)
+    .execute(&*pool)
+    .await;
 
-// pub async fn delete_merchant(Path(username): Path<String>, pool: Arc<PgPool>) -> impl IntoResponse {
-//     let user_id: Vec<UserId> = query_as!(
-//         UserId,
-//         "
-//         SELECT id
-//         FROM users
-//         WHERE username = $1
-//         ",
-//         username
-//     )
-//     .fetch_all(&*pool)
-//     .await
-//     .expect("Failed to fetch user");
+    match result {
+        Ok(_) => (StatusCode::OK, Json("Merchant details updated")).into_response(),
+        Err(e) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(format!("Failed to update merchant details: {}", e)),
+        )
+            .into_response(),
+    }
+}
 
-//     if let Some(first_user_id) = user_id.get(0) {
-//         let result = query!(
-//             "
-//             DELETE FROM merchants
-//             WHERE user_id = $1
-//             RETURNING id
-//             ",
-//             first_user_id.id
-//         )
-//         .fetch_one(&*pool)
-//         .await;
+pub async fn delete_merchant(Path(id): Path<i32>, pool: Arc<PgPool>) -> impl IntoResponse {
+    let result = query!(
+        "
+            DELETE FROM merchants
+            WHERE id = $1
+            RETURNING id
+            ",
+        id
+    )
+    .fetch_one(&*pool)
+    .await;
 
-//         match result {
-//             Ok(row) => {
-//                 let deleted_id = row.id;
-//                 return Json(json!({
-//                     "status": "success",
-//                     "message": "Merchant deleted successfully",
-//                     "deleted_id": deleted_id
-//                 }));
-//             }
-//             Err(e) => {
-//                 println!("Error deleting merchant: {:?}", e);
-//                 return Json(json!({
-//                     "status": "error",
-//                     "message": format!("Failed to delete merchant: {:?}", e)
-//                 }));
-//             }
-//         }
-//     }
-//     Json(json!({}))
-// }
+    match result {
+        Ok(row) => {
+            let deleted_id = row.id;
+            return Json(json!({
+                "status": "success",
+                "message": "Merchant deleted successfully",
+                "deleted_id": deleted_id
+            }));
+        }
+        Err(e) => {
+            println!("Error deleting merchant: {:?}", e);
+            return Json(json!({
+                "status": "error",
+                "message": format!("Failed to delete merchant: {:?}", e)
+            }));
+        }
+    }
+}

@@ -1,9 +1,8 @@
 use chrono::NaiveDateTime;
-use serde::{Serialize, Deserialize};
-
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct User {
+pub struct Agent {
     pub id: i32,
     pub email: Option<String>,
     pub password_hash: Option<String>,
@@ -14,7 +13,7 @@ pub struct User {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct NewUser {
+pub struct NewAgent {
     pub user_name: Option<String>,
     pub email: Option<String>,
     pub password: String,
@@ -25,70 +24,58 @@ pub struct NewUser {
     // pub updated_at: Option<NaiveDateTime>, // Change to DateTime type based on your needs (e.g., chrono)
 }
 
-
 #[derive(Deserialize)]
-pub  struct EditUser {
+pub struct EditAgent {
     // pub  first_name: Option<String>,
     // pub  last_name: Option<String>,
-    pub  email: Option<String>,
+    pub email: Option<String>,
     // pub  password: Option<String>,
     // pub registration_date: Option<NaiveDateTime>,
 }
 
 #[derive(Deserialize)]
-pub  struct EditUserPassoword {
+pub struct EditAgentPassoword {
     // pub  first_name: Option<String>,
     // pub  last_name: Option<String>,
-    pub  email: Option<String>,
-    pub  password: String,
+    pub email: Option<String>,
+    pub password: String,
     // pub registration_date: Option<NaiveDateTime>,
 }
 
 #[derive(Deserialize)]
-pub  struct UserEmail {
-    pub  email: Option<String>,
+pub struct AgentEmail {
+    pub email: Option<String>,
 }
 
-pub struct UserPhoneNumber{
-    pub  phone_number: Option<String>,
-}
-
-
-#[derive(Debug, Serialize, Deserialize)]
-pub  struct SignUpUserEmail {
-    pub  email: Option<String>,
+pub struct AgentPhoneNumber {
+    pub phone_number: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub  struct UserId {
+pub struct SignUpAgentEmail {
+    pub email: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AgentId {
     pub id: i32,
 }
 
-
 #[derive(Debug, Serialize, Deserialize)]
-pub struct VerifyUser {
+pub struct VerifyAgent {
     pub verification_code: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct UserToVerify {
+pub struct AgentToVerify {
     pub id: i32,
     pub email: Option<String>,
     pub verification_code: Option<String>,
     pub verified: Option<bool>,
-    pub verification_code_created_at: Option<NaiveDateTime>, 
-     
+    pub verification_code_created_at: Option<NaiveDateTime>,
 }
 
-
-pub struct AuthorizedUser {
+pub struct AuthorizedAgent {
     pub id: i32,
     pub email: Option<String>,
-    
-}
-
-
-#[derive(Debug, Serialize, Deserialize)]
-pub  struct BalanceAmount {
-    pub total_paid: i32
 }

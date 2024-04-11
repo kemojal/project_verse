@@ -1,70 +1,22 @@
 use axum::extract::Path;
-use axum::http::response;
+use reqwest::StatusCode;
 use std::sync::Arc;
 
-use crate::models::transaction_models::{NewTransaction, Transaction, TransactionWithUserDetails};
-use crate::models::user_models::{
-    EditUser, EditUserPassoword, NewUser, SignUpUserEmail, User, UserEmail, UserId,
-    UserPhoneNumber, UserToVerify, VerifyUser,
-};
+use crate::models::transaction_models::{NewTransaction,  TransactionWithUserDetails};
+
+use crate::models::user_models::UserId;
 use crate::models::wallet_models::Wallet;
 use axum::response::IntoResponse;
 use axum::Json;
-use bcrypt::{hash, DEFAULT_COST};
-use chrono::{DateTime, Duration, NaiveDateTime, Utc};
-use lettre::message::Mailbox;
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng};
+use chrono::{ NaiveDateTime, Utc};
+
+
 use serde_json::json;
 use sqlx::{query, query_as, PgPool};
 
-use lettre::transport::smtp::authentication::Credentials;
-use lettre::transport::smtp::Error as SmtpError;
-use lettre::{Message, SmtpTransport, Transport};
 
-use reqwest::{Client, StatusCode};
 
-// pub async fn get_user_transactions(Path(phone_number): Path<String>, pool: Arc<PgPool>) -> impl IntoResponse {
-//     // Fetch user_id from the users table based on phone number
-    
 
-//     // If user_id is found, fetch transactions
-   
-//     let user_id: Vec<UserId> = query_as!(
-//                 UserId,
-//                 "
-//                 SELECT id
-//                 FROM users
-//                 WHERE phone_number = $1
-//                 ",
-//                 phone_number
-//             )
-//                 .fetch_all(&*pool)
-//                 .await
-//                 .expect("Failed to fetch user_ id");
-        
-//             if let Some(first_user_id) = user_id.get(0){
-        
-//                 let transactions: Vec<Transaction> = query_as!(
-//                 Transaction,
-//                 "
-//                 SELECT id, sender_id, recipient_id, amount, currency, status, transaction_type, transaction_date
-//                 FROM transactions
-//                 WHERE sender_id = $1 OR recipient_id = $2
-//                 ",
-//                 first_user_id.id,
-//                 first_user_id.id
-//             )
-//                     .fetch_all(&*pool)
-//                     .await
-//                     .expect("Failed to fetch workspaces");
-        
-//                 return Json(transactions);
-        
-//             }
-        
-//             Json(Vec::<Transaction>::new())
-// }
 
 pub async fn get_user_transactions(Path(phone_number): Path<String>, pool: Arc<PgPool>) -> impl IntoResponse {
     let transactions: Vec<TransactionWithUserDetails> = query_as!(

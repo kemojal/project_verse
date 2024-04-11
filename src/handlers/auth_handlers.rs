@@ -26,17 +26,14 @@ pub async fn sign_in(Json(signin_data): Json<SignInData>, pool: Arc<PgPool>) -> 
         .await
         .expect("Failed to fetch user");
 
-    // // Check if user exists and password is valid
+    
     if let Some(user) = user {
-        print!("user {:?}", user);
-
-        // if let (Some(id), Some(email), Some(hashed_password), Some(first_name), Some(last_name)) = (user.id, user.email, user.password, user.first_name, user.last_name) {
-        // if let (Some(id), Some(email), Some(hashed_password), Some(verified), Some(created_at), Some(updated_at), Some(full_name), Some(username), Some(profile_picture)) = (user.id, user.email, user.password, user.verified, user.created_at, user.updated_at, user.full_name, user.username, user.profile_picture ) {
+        // print!("user {:?}", user);
             if let (Some(id), Some(email), Some(phone_number), Some(password_hash)) = (user.id, user.email, user.phone_number, user.password_hash ) {
             if bcrypt::verify(&user_password, &password_hash).expect("Failed to verify password") {
 
-                let jwt_secret = "CfLTk9J0MA3jBF3/zuE4VUyN7djM2KMPy4otUpbkbE8=";
-                let expiration = Utc::now() + Duration::hours(1);
+                // let jwt_secret = "CfLTk9J0MA3jBF3/zuE4VUyN7djM2KMPy4otUpbkbE8=";
+                // let expiration = Utc::now() + Duration::hours(1);
 
 
                 // let full_name = user.username.unwrap_or_else(|| "Unknown".to_string());

@@ -1,14 +1,14 @@
 use std::sync::Arc;
-use axum::extract::{self, Path};
-use axum::response::{Json, IntoResponse, Response};
-use chrono::expect;
-use reqwest::StatusCode;
+use axum::extract::{Path};
+use axum::response::{Json, IntoResponse};
+
+
 use serde_json::json;
-use sqlx::{pool, query, query_as, PgPool};
-use crate::models::issue_models::{Issue, NewIssue};
+use sqlx::{query, query_as, PgPool};
+
 use crate::models::user_models::UserId;
-use crate::models::wallet_models::{DepositAmount, NewWallet, Wallet};
-use crate::models::workspace_models::{NewWorkspace, Workspace, WorkspaceId};
+use crate::models::wallet_models::{NewWallet, Wallet};
+
 
 pub async fn get_wallets(pool: Arc<PgPool>) -> impl IntoResponse {
     let wallets: Vec<Wallet> = query_as!(

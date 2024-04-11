@@ -1,7 +1,6 @@
-use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
-use diesel::OptionalExtension;
+
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
-use sqlx::FromRow;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Merchant {
@@ -17,14 +16,20 @@ pub struct Merchant {
     pub website: Option<String>,
     pub edited_at: Option<NaiveDateTime>,
     pub user_id: Option<i32>,
-    // pub name: Option<String>,
+}
 
-    // pub email: Option<String>,
-    // pub password_hash: Option<String>,
-    // pub verification_code: Option<String>,
-    // pub verified: Option<bool>,
-    // pub created_at: Option<NaiveDateTime>,
-    // pub updated_at: Option<NaiveDateTime>,
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct EditMerchant {
+   
+    pub description: Option<String>,
+    pub business_name: Option<String>,
+    pub business_type: Option<String>,
+    pub address: Option<String>,
+    pub business_phone_number: Option<String>,
+    pub website: Option<String>,
+    pub edited_at: Option<NaiveDateTime>
+    
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -42,16 +47,6 @@ pub struct NewMerchant {
     // pub user_id: i32,
 }
 
-//  the once below are not yet implemented
-
-#[derive(Deserialize)]
-pub struct EditMerchant {
-    // pub  first_name: Option<String>,
-    // pub  last_name: Option<String>,
-    pub email: Option<String>,
-    // pub  password: Option<String>,
-    // pub registration_date: Option<NaiveDateTime>,
-}
 
 #[derive(Deserialize)]
 pub struct EditMerchantPassoword {
@@ -79,6 +74,11 @@ pub struct SignUpMerchantEmail {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MerchantId {
     pub id: i32,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MerchantUserId {
+    pub user_id: Option<i32>
 }
 
 #[derive(Debug, Serialize, Deserialize)]

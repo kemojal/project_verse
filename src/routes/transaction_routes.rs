@@ -1,21 +1,18 @@
 use std::sync::Arc;
 use axum::extract::Path;
-use axum::middleware::FromExtractor;
 use axum::{Json, Router};
 use axum::routing::{delete, get, post, put};
 
 use sqlx::PgPool;
 use crate::handlers::transaction_handlers::{get_user_transactions, send_money};
-use crate::handlers::user_handlers::{create_user, delete_user, edit_user, get_user_profile, get_users, resend_verification_code, verify_user};
 use crate::models::transaction_models::NewTransaction;
-use crate::models::user_models::{EditUser, NewUser, SignUpUserEmail, VerifyUser};
 
 
 
 
 
 
-pub fn transaction_routes(pool: Arc<PgPool>) -> Router {
+pub fn transaction_routes(pool: Arc<PgPool>) -> Router<Arc<PgPool>>  {
     let get_pool = Arc::clone(&pool);
     let get_user_pool = Arc::clone(&pool);
 

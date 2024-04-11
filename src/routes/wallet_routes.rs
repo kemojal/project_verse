@@ -5,12 +5,13 @@ use axum::routing::{delete, get, post, put};
 use sqlx::PgPool;
 // use crate::handlers::issue_handlers::{create_issue, get_issues, get_issues_by_workspace_id, get_my_issues_all, get_my_issues_created, get_issues_by_workspace_slug};
 use crate::handlers::wallet_handlers::{create_wallet, delete_wallet, get_wallets, get_wallets_by_user_id };
+use crate::models::wallet_models::NewWallet;
 // use crate::handlers::workspace_handlers::create_workspace;
-use crate::models::wallet_models::{DepositAmount, NewWallet};
-use crate::models::workspace_models::NewWorkspace;
 
 
-pub fn wallet_routes(pool: Arc<PgPool>) -> Router {
+
+
+pub fn wallet_routes(pool: Arc<PgPool>) -> Router<Arc<PgPool>>  {
     let get_pool = Arc::clone(&pool);
     let deposit_pool = Arc::clone(&pool);
     let withdraw_pool = Arc::clone(&pool);
